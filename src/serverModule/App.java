@@ -14,6 +14,7 @@ public class App {
     public static void main(String[] args) {
         if (!initialize(args)) return;
         FileManager fileManager = new FileManager();
+        DatabaseManager databaseManager = new DatabaseManager(databaseAddress, databaseUsername, databasePassword);
         CollectionManager collectionManager = new CollectionManager(fileManager);
         CommandManager commandManager = new CommandManager(new HelpCommand(),
                 new InfoCommand(collectionManager),
@@ -36,6 +37,7 @@ public class App {
         Server server = new Server(PORT, requestManager);
         server.run();
         collectionManager.saveCollection();
+        databaseManager.closeConnection();
     }
 
     private static boolean initialize(String[] args) {
