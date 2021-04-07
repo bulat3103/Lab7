@@ -22,6 +22,13 @@ public class Request implements Serializable {
         this.user = user;
     }
 
+    public Request(String commandName, String argument) {
+        this.commandName = commandName;
+        this.argument = argument;
+        this.objectArgument = null;
+        this.user = null;
+    }
+
     public Request(User user) {
         this.commandName = "";
         this.argument = "";

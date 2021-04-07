@@ -1,4 +1,4 @@
-package serverModule.commands;
+/*package serverModule.commands;
 
 public class SignUpCommand extends AbstractCommand{
 
@@ -6,4 +6,4 @@ public class SignUpCommand extends AbstractCommand{
     public boolean execute(String argument, Object objectArgument) {
         return false;
     }
-}
+}*/

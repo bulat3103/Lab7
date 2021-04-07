@@ -34,7 +34,7 @@ public class Client {
         this.authManager = authManager;
     }
 
-    public void run(){
+    public void run(String fileName){
         try {
             datagramChannel = DatagramChannel.open();
             address = new InetSocketAddress(this.host, this.port);
@@ -42,6 +42,9 @@ public class Client {
             datagramChannel.configureBlocking(false);
             selector = Selector.open();
             datagramChannel.register(selector, SelectionKey.OP_WRITE);
+            send(new Request("loadCollection", fileName));
+            Response response = receive();
+            System.out.print(response.getResponseBody());
             Request requestToServer = null;
             Response serverResponse = null;
             do {

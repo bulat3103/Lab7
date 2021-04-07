@@ -12,7 +12,7 @@ public class App {
     private static String databaseAddress;
 
     public static void main(String[] args) {
-        if (!initialize(args)) return;
+        //if (!initialize(args)) return;
         FileManager fileManager = new FileManager();
         DatabaseManager databaseManager = new DatabaseManager(databaseAddress, databaseUsername, databasePassword);
         CollectionManager collectionManager = new CollectionManager(fileManager);
