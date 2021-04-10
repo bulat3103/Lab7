@@ -1,5 +1,7 @@
 package serverModule.commands;
 
+import common.utility.User;
+
 import java.util.Objects;
 
 /**
@@ -14,7 +16,7 @@ public abstract class AbstractCommand {
         this.description = description;
     }
 
-    public abstract boolean execute(String argument, Object objectArgument);
+    public abstract boolean execute(String argument, Object objectArgument, User user);
 
     /**
      * @return Name and usage way of the command.

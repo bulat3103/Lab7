@@ -1,10 +1,13 @@
 package serverModule.commands;
 
 import common.data.SpaceMarine;
+import common.exceptions.DatabaseManagerException;
 import common.exceptions.WrongAmountOfParametersException;
 import common.utility.SpaceMarineLite;
+import common.utility.User;
 import serverModule.utility.CollectionManager;
 import clientModule.utility.SpaceMarineBuilder;
+import serverModule.utility.DatabaseCollectionManager;
 import serverModule.utility.ResponseOutputer;
 
 import java.time.LocalDateTime;
@@ -14,10 +17,12 @@ import java.time.LocalDateTime;
  */
 public class InsertCommand extends AbstractCommand{
     private CollectionManager collectionManager;
+    private DatabaseCollectionManager databaseCollectionManager;
 
-    public InsertCommand(CollectionManager collectionManager) {
+    public InsertCommand(CollectionManager collectionManager, DatabaseCollectionManager databaseCollectionManager) {
         super("insert null {element}", "добавить новый элемент с заданным ключом");
         this.collectionManager = collectionManager;
+        this.databaseCollectionManager = databaseCollectionManager;
     }
 
     /**
@@ -25,27 +30,18 @@ public class InsertCommand extends AbstractCommand{
      * @return Command exit status.
      */
     @Override
-    public boolean execute(String argument, Object objectArgument) {
+    public boolean execute(String argument, Object objectArgument, User user) {
         try {
             if (argument.isEmpty() || objectArgument == null) throw new WrongAmountOfParametersException();
             int key = Integer.parseInt(argument);
             SpaceMarineLite marineLite = (SpaceMarineLite) objectArgument;
-            collectionManager.addToCollection(key,new SpaceMarine(
-                    collectionManager.generateId(),
-                    marineLite.getName(),
-                    marineLite.getCoordinates(),
-                    LocalDateTime.now(),
-                    marineLite.getHealth(),
-                    marineLite.getHeartCount(),
-                    marineLite.getAchievements(),
-                    marineLite.getWeaponType(),
-                    marineLite.getChapter()
-
-            ));
+            collectionManager.addToCollection(key, databaseCollectionManager.insertSpaceMarine(marineLite, user, key));
             ResponseOutputer.append("Успешно добавлено в коллекцию!\n");
             return true;
         } catch (WrongAmountOfParametersException exception) {
             ResponseOutputer.append("Вместе с этой командой должен быть передан параметр! Наберит 'help' для справки\n");
+        } catch (DatabaseManagerException e) {
+            ResponseOutputer.append("Произошла ошибка при обращении к базе данных!\n");
         }
         return false;
     }

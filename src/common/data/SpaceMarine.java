@@ -1,5 +1,7 @@
 package common.data;
 
+import common.utility.User;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -16,8 +18,9 @@ public class SpaceMarine implements Comparable<SpaceMarine>{
     private String achievements;
     private Weapon weaponType;
     private Chapter chapter;
+    private User owner;
 
-    public SpaceMarine(int id, String name, Coordinates coordinates, LocalDateTime creationDate, int health, Integer heartCount, String achievements, Weapon weaponType, Chapter chapter) {
+    public SpaceMarine(int id, String name, Coordinates coordinates, LocalDateTime creationDate, int health, Integer heartCount, String achievements, Weapon weaponType, Chapter chapter, User owner) {
         this.id = id;
         this.name = name;
         this.coordinates = coordinates;
@@ -27,6 +30,7 @@ public class SpaceMarine implements Comparable<SpaceMarine>{
         this.achievements = achievements;
         this.weaponType = weaponType;
         this.chapter = chapter;
+        this.owner = owner;
     }
 
     /**
@@ -92,6 +96,10 @@ public class SpaceMarine implements Comparable<SpaceMarine>{
         return chapter;
     }
 
+    public User getOwner() {
+        return owner;
+    }
+
     @Override
     public int compareTo(SpaceMarine o) {
         if (this.health == o.health) {
@@ -120,17 +128,11 @@ public class SpaceMarine implements Comparable<SpaceMarine>{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SpaceMarine that = (SpaceMarine) o;
-        return health == that.health &&
-                Objects.equals(name, that.name) &&
-                Objects.equals(coordinates, that.coordinates) &&
-                Objects.equals(heartCount, that.heartCount) &&
-                Objects.equals(achievements, that.achievements) &&
-                weaponType == that.weaponType &&
-                Objects.equals(chapter, that.chapter);
+        return id == that.id && health == that.health && Objects.equals(name, that.name) && Objects.equals(coordinates, that.coordinates) && Objects.equals(creationDate, that.creationDate) && Objects.equals(heartCount, that.heartCount) && Objects.equals(achievements, that.achievements) && weaponType == that.weaponType && Objects.equals(chapter, that.chapter) && Objects.equals(owner, that.owner);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, coordinates, creationDate, health, heartCount, achievements, weaponType, chapter);
+        return Objects.hash(id, name, coordinates, creationDate, health, heartCount, achievements, weaponType, chapter, owner);
     }
 }

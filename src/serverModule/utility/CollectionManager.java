@@ -1,8 +1,8 @@
 package serverModule.utility;
 
-import common.data.Chapter;
 import common.data.SpaceMarine;
 import common.data.Weapon;
+import common.exceptions.DatabaseManagerException;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 public class CollectionManager {
     private TreeMap<Integer, SpaceMarine> marines = new TreeMap<>();
     private LocalDateTime lastInitTime;
-    private FileManager fileManager;
+    private DatabaseCollectionManager databaseCollectionManager;
 
-    public CollectionManager(FileManager fileManager) {
-        this.lastInitTime = null;
-        this.fileManager = fileManager;
+    public CollectionManager(DatabaseCollectionManager databaseCollectionManager) {
+        this.databaseCollectionManager = databaseCollectionManager;
+        loadCollection();
     }
 
     /**
@@ -26,14 +26,6 @@ public class CollectionManager {
      */
     public TreeMap<Integer, SpaceMarine> getCollection() {
         return marines;
-    }
-
-    /**
-     * Loads the collection from file.
-     */
-    public void loadCollection(String fileName) {
-        marines = fileManager.readCollection(fileName);
-        lastInitTime = LocalDateTime.now();
     }
 
     /**
@@ -73,31 +65,25 @@ public class CollectionManager {
     }
 
     /**
-     * Saves the collection to file.
-     */
-    public void saveCollection() {
-        fileManager.writeCollection(marines);
-    }
-
-    /**
      * @param marineToCompare The marine used to compare with others.
      */
-    public void removeGreater(SpaceMarine marineToCompare) {
-        marines.values().removeIf(marine -> marine.compareTo(marineToCompare) > 0);
+    public List<SpaceMarine> getGreater(SpaceMarine marineToCompare) {
+        return marines.values().stream().filter(spaceMarine -> spaceMarine.compareTo(marineToCompare) > 0).collect(Collectors.toList());
     }
 
     /**
      * @param keyToCompare The key used to take the all marines' keys, which are smaller than key in parameters.
      */
-    public void removeLowerKey(int keyToCompare) {
-        marines.entrySet().removeIf(entry -> entry.getKey() < keyToCompare);
+    public List<SpaceMarine> getLowerKey(int keyToCompare) {
+        return marines.entrySet().stream().filter(entry -> entry.getKey() < keyToCompare).map(Map.Entry::getValue).collect(Collectors.toList());
     }
 
-    /**
-     * @param weapon The weapon used to take the marines' keys.
-     */
-    public void removeAllByWeaponType(Weapon weapon) {
-        marines.values().removeIf(spaceMarine -> spaceMarine.getWeaponType().equals(weapon));
+    public List<SpaceMarine> getAllByWeaponType(Weapon weapon) {
+        return marines.values().stream().filter(spaceMarine -> spaceMarine.getWeaponType().equals(weapon)).collect(Collectors.toList());
+    }
+
+    public void removeByValue(SpaceMarine marine) {
+        marines.entrySet().removeIf(entry -> entry.getValue().equals(marine));
     }
 
     /**
@@ -157,5 +143,11 @@ public class CollectionManager {
     public String showCollection() {
         if (marines.isEmpty()) return "Коллекция пуста!";
         return marines.values().stream().reduce("", (sum, m) -> sum += m + "\n\n", (sum1, sum2) -> sum1 + sum2).trim();
+    }
+
+    public void loadCollection() {
+        marines = databaseCollectionManager.getCollection();
+        lastInitTime = LocalDateTime.now();
+        System.out.println("Коллекция загружена");
     }
 }

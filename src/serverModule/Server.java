@@ -76,7 +76,6 @@ public class Server {
     private void do_CTRL_C_Thread() {
         scanner = new Scanner(System.in);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            new RequestProcessingThread(requestManager, new Request("save","")).start();
             System.out.println("Завершаю программу.");
         }));
     }

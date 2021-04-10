@@ -2,6 +2,7 @@ package serverModule.commands;
 
 import common.exceptions.EmptyCollectionException;
 import common.exceptions.WrongAmountOfParametersException;
+import common.utility.User;
 import serverModule.utility.CollectionManager;
 import serverModule.utility.ResponseOutputer;
 
@@ -21,7 +22,7 @@ public class AverageOfHeartCountCommand extends AbstractCommand{
      * @return Command exit status.
      */
     @Override
-    public boolean execute(String argument, Object objectArgument) {
+    public boolean execute(String argument, Object objectArgument, User user) {
         try {
             if (!argument.isEmpty() || objectArgument != null) throw new WrongAmountOfParametersException();
             double average_of_heart_count = collectionManager.averageOfHeartCount();

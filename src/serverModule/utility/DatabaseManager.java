@@ -8,6 +8,18 @@ public class DatabaseManager {
     public static final String COORDINATES_TABLE = "coordinates";
     public static final String CHAPTER_TABLE = "chapter";
 
+    public static final String MARINE_TABLE_ID_COLUMN = "id";
+    public static final String MARINE_TABLE_KEY_COLUMN = "key";
+    public static final String MARINE_TABLE_NAME_COLUMN = "name";
+    public static final String MARINE_TABLE_COORDINATES_ID_COLUMN = "coordinates_id";
+    public static final String MARINE_TABLE_CREATION_DATE_COLUMN = "creation_date";
+    public static final String MARINE_TABLE_HEALTH_COLUMN = "health";
+    public static final String MARINE_TABLE_HEART_COUNT_COLUMN = "heart_count";
+    public static final String MARINE_TABLE_ACHIEVEMENTS_COLUMN = "achievements";
+    public static final String MARINE_TABLE_WEAPON_TYPE_COLUMN = "weapon_type";
+    public static final String MARINE_TABLE_CHAPTER_ID_COLUMN = "chapter_id";
+    public static final String MARINE_TABLE_USER_ID_COLUMN = "user_id";
+
     public static final String USER_TABLE_ID_COLUMN = "id";
     public static final String USER_TABLE_USERNAME_COLUMN = "username";
     public static final String USER_TABLE_PASSWORD_COLUMN = "password";
@@ -19,7 +31,6 @@ public class DatabaseManager {
     public static final String COORDINATES_TABLE_ID_COLUMN = "id";
     public static final String COORDINATES_TABLE_X_COLUMN = "x";
     public static final String COORDINATES_TABLE_Y_COLUMN = "y";
-    public static final String COORDINATES_TABLE_SPACE_MARINE_ID_COLUMN = "space_marine_id";
 
     private final String JDBC_DRIVER = "org.postgresql.Driver";
 

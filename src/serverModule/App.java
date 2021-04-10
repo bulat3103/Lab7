@@ -13,30 +13,28 @@ public class App {
 
     public static void main(String[] args) {
         //if (!initialize(args)) return;
-        FileManager fileManager = new FileManager();
         DatabaseManager databaseManager = new DatabaseManager(databaseAddress, databaseUsername, databasePassword);
-        CollectionManager collectionManager = new CollectionManager(fileManager);
+        DatabaseUserManager databaseUserManager = new DatabaseUserManager(databaseManager);
+        DatabaseCollectionManager databaseCollectionManager = new DatabaseCollectionManager(databaseManager, databaseUserManager);
+        CollectionManager collectionManager = new CollectionManager(databaseCollectionManager);
         CommandManager commandManager = new CommandManager(new HelpCommand(),
                 new InfoCommand(collectionManager),
                 new ShowCommand(collectionManager),
-                new InsertCommand(collectionManager),
-                new UpdateCommand(collectionManager),
-                new RemoveKeyCommand(collectionManager),
-                new ClearCommand(collectionManager),
+                new InsertCommand(collectionManager, databaseCollectionManager),
+                new UpdateCommand(collectionManager, databaseCollectionManager),
+                new RemoveKeyCommand(collectionManager, databaseCollectionManager),
+                new ClearCommand(collectionManager, databaseCollectionManager),
                 new ExecuteScriptCommand(),
                 new ExitCommand(),
-                new RemoveGreaterCommand(collectionManager),
+                new RemoveGreaterCommand(collectionManager, databaseCollectionManager),
                 new HistoryCommand(),
-                new RemoveLowerKeyCommand(collectionManager),
-                new RemoveAllByWeaponTypeCommand(collectionManager),
-                new SaveCommand(collectionManager),
+                new RemoveLowerKeyCommand(collectionManager, databaseCollectionManager),
+                new RemoveAllByWeaponTypeCommand(collectionManager, databaseCollectionManager),
                 new SumOfHealthCommand(collectionManager),
-                new AverageOfHeartCountCommand(collectionManager),
-                new LoadCollectionCommand(collectionManager));
+                new AverageOfHeartCountCommand(collectionManager));
         RequestManager requestManager = new RequestManager(commandManager);
         Server server = new Server(PORT, requestManager);
         server.run();
-        collectionManager.saveCollection();
         databaseManager.closeConnection();
     }
 

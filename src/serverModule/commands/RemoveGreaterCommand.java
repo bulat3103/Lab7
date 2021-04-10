@@ -1,10 +1,14 @@
 package serverModule.commands;
 
 import common.data.SpaceMarine;
+import common.exceptions.DatabaseManagerException;
 import common.exceptions.EmptyCollectionException;
+import common.exceptions.IllegalDatabaseEditException;
 import common.exceptions.WrongAmountOfParametersException;
 import common.utility.SpaceMarineLite;
+import common.utility.User;
 import serverModule.utility.CollectionManager;
+import serverModule.utility.DatabaseCollectionManager;
 import serverModule.utility.ResponseOutputer;
 
 import java.time.LocalDateTime;
@@ -15,10 +19,12 @@ import java.util.List;
  */
 public class RemoveGreaterCommand extends AbstractCommand{
     private CollectionManager collectionManager;
+    private DatabaseCollectionManager databaseCollectionManager;
 
-    public RemoveGreaterCommand(CollectionManager collectionManager) {
+    public RemoveGreaterCommand(CollectionManager collectionManager, DatabaseCollectionManager databaseCollectionManager) {
         super("remove_greater {element}", "удалить из коллекции все элементы, превышающие заданный");
         this.collectionManager = collectionManager;
+        this.databaseCollectionManager = databaseCollectionManager;
     }
 
     /**
@@ -26,7 +32,7 @@ public class RemoveGreaterCommand extends AbstractCommand{
      * @return Command exit status.
      */
     @Override
-    public boolean execute(String argument, Object objectArgument) {
+    public boolean execute(String argument, Object objectArgument, User user) {
         try {
             if (!argument.isEmpty() || objectArgument == null) throw new WrongAmountOfParametersException();
             if (collectionManager.collectionSize() == 0) throw new EmptyCollectionException();
@@ -40,15 +46,27 @@ public class RemoveGreaterCommand extends AbstractCommand{
                     marineLite.getHeartCount(),
                     marineLite.getAchievements(),
                     marineLite.getWeaponType(),
-                    marineLite.getChapter()
+                    marineLite.getChapter(),
+                    user
             );
-            collectionManager.removeGreater(marineToCompare);
+            List<SpaceMarine> marines = collectionManager.getGreater(marineToCompare);
+            for (SpaceMarine marine : marines) {
+                if (!marine.getOwner().equals(user)) continue;
+                if (!databaseCollectionManager.checkSpaceMarineByIdAndUserId(marine.getId(), user)) throw new IllegalDatabaseEditException();
+                databaseCollectionManager.deleteSpaceMarineById(marine.getId());
+                collectionManager.removeByValue(marine);
+            }
             ResponseOutputer.append("Солдаты успешно удалены!\n");
             return true;
         } catch (WrongAmountOfParametersException exception) {
             ResponseOutputer.append("У этой команды нет параметров!\n");
         } catch (EmptyCollectionException exception) {
             ResponseOutputer.append("Коллекция пуста!\n");
+        } catch (DatabaseManagerException e) {
+            ResponseOutputer.append("Произошла ошибка при обращении к базе данных!\n");
+        } catch (IllegalDatabaseEditException exception) {
+            ResponseOutputer.append("Произошло нелегальное изменение объекта в базе данных!\n");
+            ResponseOutputer.append("Перезапустите клиент для избежания ошибок!\n");
         }
         return false;
     }

@@ -65,8 +65,8 @@ public class DatabaseUserManager {
         }
     }
 
-    public long getUserIdByUsername(User user) throws DatabaseManagerException {
-        long userID;
+    public int getUserIdByUsername(User user) throws DatabaseManagerException {
+        int userID;
         PreparedStatement preparedStatement = null;
         try {
             preparedStatement = databaseManager.doPreparedStatement(SELECT_USER_BY_USERNAME, false);
@@ -74,7 +74,7 @@ public class DatabaseUserManager {
             ResultSet resultSet = preparedStatement.executeQuery();
             System.out.println("Выполнен запрос SELECT_USER_BY_USERNAME!");
             if (resultSet.next()) {
-                userID = resultSet.getLong(DatabaseManager.USER_TABLE_ID_COLUMN);
+                userID = resultSet.getInt(DatabaseManager.USER_TABLE_ID_COLUMN);
             } else userID = -1;
             return userID;
         } catch (SQLException e) {

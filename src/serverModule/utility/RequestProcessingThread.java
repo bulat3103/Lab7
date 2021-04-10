@@ -2,6 +2,7 @@ package serverModule.utility;
 
 import common.utility.Request;
 import common.utility.Response;
+import common.utility.User;
 
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -19,14 +20,6 @@ public class RequestProcessingThread extends Thread{
         this.address = address;
         this.port = port;
         this.socket = socket;
-    }
-
-    public RequestProcessingThread(RequestManager requestManager, Request request) {
-        this.requestManager = requestManager;
-        this.request = request;
-        this.address = null;
-        this.port = 0;
-        this.socket = null;
     }
 
     @Override

@@ -4,10 +4,11 @@ import common.data.Chapter;
 import common.data.Coordinates;
 import common.data.SpaceMarine;
 import common.data.Weapon;
-import common.exceptions.EmptyCollectionException;
-import common.exceptions.WrongAmountOfParametersException;
+import common.exceptions.*;
 import common.utility.SpaceMarineLite;
+import common.utility.User;
 import serverModule.utility.CollectionManager;
+import serverModule.utility.DatabaseCollectionManager;
 import serverModule.utility.ResponseOutputer;
 
 import java.time.LocalDateTime;
@@ -17,10 +18,12 @@ import java.time.LocalDateTime;
  */
 public class UpdateCommand extends AbstractCommand{
     private CollectionManager collectionManager;
+    private DatabaseCollectionManager databaseCollectionManager;
 
-    public UpdateCommand(CollectionManager collectionManager) {
+    public UpdateCommand(CollectionManager collectionManager, DatabaseCollectionManager databaseCollectionManager) {
         super("update id {element}", "обновить значение элемента коллекции по id");
         this.collectionManager = collectionManager;
+        this.databaseCollectionManager = databaseCollectionManager;
     }
 
     /**
@@ -28,14 +31,18 @@ public class UpdateCommand extends AbstractCommand{
      * @return Command exit status.
      */
     @Override
-    public boolean execute(String argument, Object objectArgument) {
+    public boolean execute(String argument, Object objectArgument, User user) {
         try {
             if (argument.isEmpty() || objectArgument == null) throw new WrongAmountOfParametersException();
             if (collectionManager.collectionSize() == 0) throw new EmptyCollectionException();
             int id = Integer.parseInt(argument);
             int key = collectionManager.getKeyById(id);
             SpaceMarine oldMarine = collectionManager.getFromCollection(key);
+            if (oldMarine == null) throw new NotFoundMarineException();
+            if (!oldMarine.getOwner().equals(user)) throw new PermissionDeniedException();
+            if (!databaseCollectionManager.checkSpaceMarineByIdAndUserId(oldMarine.getId(), user)) throw new IllegalDatabaseEditException();
             SpaceMarineLite marineLite = (SpaceMarineLite) objectArgument;
+            databaseCollectionManager.updateSpaceMarineByID(id, marineLite);
             String name = marineLite.getName() == null ? oldMarine.getName() : marineLite.getName();
             Coordinates coordinates = marineLite.getCoordinates() == null ? oldMarine.getCoordinates() : marineLite.getCoordinates();
             LocalDateTime creationDate = oldMarine.getCreationDate();
@@ -54,14 +61,24 @@ public class UpdateCommand extends AbstractCommand{
                     heartCount,
                     achievements,
                     weapon,
-                    chapter
+                    chapter,
+                    user
             ));
             ResponseOutputer.append("Успешно изменено!\n");
             return true;
         } catch (WrongAmountOfParametersException exception) {
-            System.out.println("Вместе с этой командой должен быть передан параметр! Наберит 'help' для справки");
+            ResponseOutputer.append("Вместе с этой командой должен быть передан параметр! Наберит 'help' для справки!\n");
         } catch (EmptyCollectionException exception) {
-            System.out.println("Коллекция пуста!");
+            ResponseOutputer.append("Коллекция пуста!\n");
+        } catch (NotFoundMarineException e) {
+            ResponseOutputer.append("SpaceMarine с таким id в коллекции нет!\n");
+        } catch (PermissionDeniedException e) {
+            ResponseOutputer.append("Принадлежащие другим пользователям объекты доступны только для чтения!\n");
+        } catch (DatabaseManagerException e) {
+            ResponseOutputer.append("Произошла ошибка при обращении к базе данных!\n");
+        } catch (IllegalDatabaseEditException e) {
+            ResponseOutputer.append("Произошло нелегальное изменение объекта в базе данных!\n");
+            ResponseOutputer.append("Перезапустите клиент для избежания ошибок!\n");
         }
         return false;
     }
