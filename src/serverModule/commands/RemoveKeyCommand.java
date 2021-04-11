@@ -27,6 +27,7 @@ public class RemoveKeyCommand extends AbstractCommand{
     @Override
     public boolean execute(String argument, Object objectArgument, User user) {
         try {
+            if (user == null) throw new NonAuthorizedUserException();
             if (argument.isEmpty() || objectArgument != null) throw new WrongAmountOfParametersException();
             if (collectionManager.collectionSize() == 0) throw new EmptyCollectionException();
             int key = Integer.parseInt(argument);
@@ -51,6 +52,8 @@ public class RemoveKeyCommand extends AbstractCommand{
             ResponseOutputer.append("Перезапустите клиент для избежания ошибок!\n");
         } catch (PermissionDeniedException exception) {
             ResponseOutputer.append("Принадлежащие другим пользователям объекты доступны только для чтения!\n");
+        } catch (NonAuthorizedUserException e) {
+            ResponseOutputer.append("Необходимо авторизоваться!\n");
         }
         return false;
     }

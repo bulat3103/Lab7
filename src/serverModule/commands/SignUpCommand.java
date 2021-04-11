@@ -10,7 +10,7 @@ import serverModule.utility.ResponseOutputer;
 public class SignUpCommand extends AbstractCommand{
     private DatabaseUserManager databaseUserManager;
 
-    public SignUpCommand(String name, String description, DatabaseUserManager databaseUserManager) {
+    public SignUpCommand(DatabaseUserManager databaseUserManager) {
         super("sign_up", "регистрация нового пользователя");
         this.databaseUserManager = databaseUserManager;
     }

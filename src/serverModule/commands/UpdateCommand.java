@@ -33,6 +33,7 @@ public class UpdateCommand extends AbstractCommand{
     @Override
     public boolean execute(String argument, Object objectArgument, User user) {
         try {
+            if (user == null) throw new NonAuthorizedUserException();
             if (argument.isEmpty() || objectArgument == null) throw new WrongAmountOfParametersException();
             if (collectionManager.collectionSize() == 0) throw new EmptyCollectionException();
             int id = Integer.parseInt(argument);
@@ -79,6 +80,8 @@ public class UpdateCommand extends AbstractCommand{
         } catch (IllegalDatabaseEditException e) {
             ResponseOutputer.append("Произошло нелегальное изменение объекта в базе данных!\n");
             ResponseOutputer.append("Перезапустите клиент для избежания ошибок!\n");
+        } catch (NonAuthorizedUserException e) {
+            ResponseOutputer.append("Необходимо авторизоваться!\n");
         }
         return false;
     }

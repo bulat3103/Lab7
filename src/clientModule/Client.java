@@ -34,7 +34,8 @@ public class Client {
         this.authManager = authManager;
     }
 
-    public void run(String fileName){
+    public void run(){
+        System.out.println("Клиент запущен.");
         try {
             datagramChannel = DatagramChannel.open();
             address = new InetSocketAddress(this.host, this.port);
@@ -42,9 +43,6 @@ public class Client {
             datagramChannel.configureBlocking(false);
             selector = Selector.open();
             datagramChannel.register(selector, SelectionKey.OP_WRITE);
-            send(new Request("loadCollection", fileName));
-            Response response = receive();
-            System.out.print(response.getResponseBody());
             Request requestToServer = null;
             Response serverResponse = null;
             do {
@@ -53,11 +51,10 @@ public class Client {
                 if (requestToServer.isEmpty()) continue;
                 send(requestToServer);
                 serverResponse = receive();
-                if (serverResponse.getResponseCode().equals(ResponseCode.OK) && requestToServer.getCommandName().equals("log_in")) {
+                if (serverResponse.getResponseCode().equals(ResponseCode.OK) && (requestToServer.getCommandName().equals("sign_in") || requestToServer.getCommandName().equals("sign_up")))
                     user = requestToServer.getUser();
-                } else if (serverResponse.getResponseCode().equals(ResponseCode.OK) && requestToServer.getCommandName().equals("log_out")) {
+                if (serverResponse.getResponseCode().equals(ResponseCode.OK) && requestToServer.getCommandName().equals("log_out"))
                     user = null;
-                }
                 System.out.print(serverResponse.getResponseBody());
             } while(!requestToServer.getCommandName().equals("exit"));
         } catch (IOException | ClassNotFoundException exception) {

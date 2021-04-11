@@ -7,9 +7,8 @@ import serverModule.utility.*;
 public class App {
     public static final int PORT = 20002;
     private static String databaseUsername = "s311726";
-    private static String databaseHost;
-    private static String databasePassword;
-    private static String databaseAddress;
+    private static String databasePassword = "ifj051";
+    private static String databaseAddress = "jdbc:postgresql://localhost:19999/studs";
 
     public static void main(String[] args) {
         //if (!initialize(args)) return;
@@ -31,7 +30,10 @@ public class App {
                 new RemoveLowerKeyCommand(collectionManager, databaseCollectionManager),
                 new RemoveAllByWeaponTypeCommand(collectionManager, databaseCollectionManager),
                 new SumOfHealthCommand(collectionManager),
-                new AverageOfHeartCountCommand(collectionManager));
+                new AverageOfHeartCountCommand(collectionManager),
+                new SignUpCommand(databaseUserManager),
+                new SignInCommand(databaseUserManager),
+                new LogOutCommand(databaseUserManager));
         RequestManager requestManager = new RequestManager(commandManager);
         Server server = new Server(PORT, requestManager);
         server.run();
@@ -41,12 +43,12 @@ public class App {
     private static boolean initialize(String[] args) {
         try {
             if (args.length != 2) throw new WrongAmountOfParametersException();
-            databaseHost = args[0];
+            databaseUsername = args[0];
             databasePassword = args[1];
-            databaseAddress = "jdbc:postgresql://" + databaseHost + ":5432/studs";
+            databaseAddress = "jdbc:postgresql://localhost:5432/studs";
             return true;
         } catch (WrongAmountOfParametersException e) {
-            System.out.println("Должно передаваться 2 параметра: 'host', 'password'!");
+            System.out.println("Должно передаваться 2 параметра: 'username', 'password'!");
         }
         return false;
     }

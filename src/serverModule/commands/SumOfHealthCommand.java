@@ -1,6 +1,7 @@
 package serverModule.commands;
 
 import common.exceptions.EmptyCollectionException;
+import common.exceptions.NonAuthorizedUserException;
 import common.exceptions.WrongAmountOfParametersException;
 import common.utility.User;
 import serverModule.utility.CollectionManager;
@@ -24,6 +25,7 @@ public class SumOfHealthCommand extends AbstractCommand{
     @Override
     public boolean execute(String argument, Object objectArgument, User user) {
         try {
+            if (user == null) throw new NonAuthorizedUserException();
             if (!argument.isEmpty() || objectArgument != null) throw new WrongAmountOfParametersException();
             double sum_of_health = collectionManager.getSumOfHealth();
             if (sum_of_health == 0) throw new EmptyCollectionException();
@@ -33,6 +35,8 @@ public class SumOfHealthCommand extends AbstractCommand{
             ResponseOutputer.append("У этой команды нет параметров!\n");
         } catch (EmptyCollectionException exception) {
             ResponseOutputer.append("Коллекция пуста!\n");
+        } catch (NonAuthorizedUserException e) {
+            ResponseOutputer.append("Необходимо авторизоваться!\n");
         }
         return false;
     }

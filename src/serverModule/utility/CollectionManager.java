@@ -148,6 +148,6 @@ public class CollectionManager {
     public void loadCollection() {
         marines = databaseCollectionManager.getCollection();
         lastInitTime = LocalDateTime.now();
-        System.out.println("Коллекция загружена");
+        System.out.println("Коллекция загружена.");
     }
 }

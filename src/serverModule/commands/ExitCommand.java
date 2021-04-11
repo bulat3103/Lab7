@@ -1,6 +1,7 @@
 package serverModule.commands;
 
 import common.exceptions.WrongAmountOfParametersException;
+import common.utility.User;
 
 /**
  * Command 'exit'. Checks for wrong arguments then do nothing.
@@ -16,7 +17,7 @@ public class ExitCommand extends AbstractCommand {
      * @return Command exit status.
      */
     @Override
-    public boolean execute(String argument, Object objectArgument) {
+    public boolean execute(String argument, Object objectArgument, User user) {
         try {
             if (!argument.isEmpty() || objectArgument != null) throw new WrongAmountOfParametersException();
             return true;

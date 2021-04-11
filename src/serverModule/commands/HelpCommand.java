@@ -1,5 +1,6 @@
 package serverModule.commands;
 
+import common.exceptions.NonAuthorizedUserException;
 import common.exceptions.WrongAmountOfParametersException;
 import common.utility.User;
 import serverModule.utility.ResponseOutputer;

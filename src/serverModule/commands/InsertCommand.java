@@ -2,6 +2,7 @@ package serverModule.commands;
 
 import common.data.SpaceMarine;
 import common.exceptions.DatabaseManagerException;
+import common.exceptions.NonAuthorizedUserException;
 import common.exceptions.WrongAmountOfParametersException;
 import common.utility.SpaceMarineLite;
 import common.utility.User;
@@ -32,6 +33,7 @@ public class InsertCommand extends AbstractCommand{
     @Override
     public boolean execute(String argument, Object objectArgument, User user) {
         try {
+            if (user == null) throw new NonAuthorizedUserException();
             if (argument.isEmpty() || objectArgument == null) throw new WrongAmountOfParametersException();
             int key = Integer.parseInt(argument);
             SpaceMarineLite marineLite = (SpaceMarineLite) objectArgument;
@@ -42,6 +44,8 @@ public class InsertCommand extends AbstractCommand{
             ResponseOutputer.append("Вместе с этой командой должен быть передан параметр! Наберит 'help' для справки\n");
         } catch (DatabaseManagerException e) {
             ResponseOutputer.append("Произошла ошибка при обращении к базе данных!\n");
+        } catch (NonAuthorizedUserException e) {
+            ResponseOutputer.append("Необходимо авторизоваться!\n");
         }
         return false;
     }

@@ -8,7 +8,6 @@ import common.exceptions.DatabaseManagerException;
 import common.utility.SpaceMarineLite;
 import common.utility.User;
 
-import javax.xml.crypto.Data;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,7 +32,7 @@ public class DatabaseCollectionManager {
             DatabaseManager.MARINE_TABLE_ACHIEVEMENTS_COLUMN + ", " +
             DatabaseManager.MARINE_TABLE_WEAPON_TYPE_COLUMN + ", " +
             DatabaseManager.MARINE_TABLE_CHAPTER_ID_COLUMN + ", " +
-            DatabaseManager.MARINE_TABLE_USER_ID_COLUMN + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?::weapon, ?, ?)";
+            DatabaseManager.MARINE_TABLE_USER_ID_COLUMN + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private final String DELETE_MARINE_BY_ID = "DELETE FROM " + DatabaseManager.MARINE_TABLE +
             " WHERE " + DatabaseManager.MARINE_TABLE_ID_COLUMN + " = ?";
     private final String UPDATE_MARINE_NAME_BY_ID = "UPDATE " + DatabaseManager.MARINE_TABLE + " SET " +
@@ -120,7 +119,6 @@ public class DatabaseCollectionManager {
             preparedStatement = databaseManager.doPreparedStatement(SELECT_COORDINATES_BY_ID, false);
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-            System.out.println("Выполнен запрос SELECT_COORDINATES_BY_ID.");
             if (resultSet.next()) {
                 coordinates = new Coordinates(
                         resultSet.getDouble(DatabaseManager.COORDINATES_TABLE_X_COLUMN),
@@ -143,7 +141,6 @@ public class DatabaseCollectionManager {
             preparedStatement = databaseManager.doPreparedStatement(SELECT_CHAPTER_BY_ID, false);
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-            System.out.println("Выполнен запрос SELECT_CHAPTER_BY_ID.");
             if (resultSet.next()) {
                 chapter = new Chapter(
                         resultSet.getString(DatabaseManager.CHAPTER_TABLE_NAME_COLUMN),
@@ -230,7 +227,7 @@ public class DatabaseCollectionManager {
             insertMarine.setInt(1, key);
             insertMarine.setString(2, marineLite.getName());
             insertMarine.setInt(3, coordinatesID);
-            insertChapter.setTimestamp(4, Timestamp.valueOf(localDateTime));
+            insertMarine.setTimestamp(4, Timestamp.valueOf(localDateTime));
             insertMarine.setInt(5, marineLite.getHealth());
             insertMarine.setInt(6, marineLite.getHeartCount());
             insertMarine.setString(7, marineLite.getAchievements());
@@ -242,8 +239,6 @@ public class DatabaseCollectionManager {
             int spaceMarineID;
             if (resultSetMarine.next()) spaceMarineID = resultSetMarine.getInt(1);
             else throw new SQLException();
-            System.out.println("Выполнен запрос INSERT_SPACE_MARINE.");
-
             marineToInsert = new SpaceMarine(
                     spaceMarineID,
                     marineLite.getName(),
@@ -260,6 +255,7 @@ public class DatabaseCollectionManager {
             return marineToInsert;
         } catch (SQLException exception) {
             System.out.println("Произошла ошибка при добавлении нового объекта в БД!");
+            exception.printStackTrace();
             databaseManager.rollback();
             throw new DatabaseManagerException();
         } finally {

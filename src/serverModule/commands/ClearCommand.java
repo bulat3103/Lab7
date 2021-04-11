@@ -1,10 +1,7 @@
 package serverModule.commands;
 
 import common.data.SpaceMarine;
-import common.exceptions.DatabaseManagerException;
-import common.exceptions.IllegalDatabaseEditException;
-import common.exceptions.PermissionDeniedException;
-import common.exceptions.WrongAmountOfParametersException;
+import common.exceptions.*;
 import common.utility.User;
 import serverModule.utility.CollectionManager;
 import serverModule.utility.DatabaseCollectionManager;
@@ -30,6 +27,7 @@ public class ClearCommand extends AbstractCommand{
     @Override
     public boolean execute(String argument, Object objectArgument, User user) {
         try {
+            if (user == null) throw new NonAuthorizedUserException();
             if(!argument.isEmpty() || objectArgument != null) throw new WrongAmountOfParametersException();
             for (SpaceMarine marine : collectionManager.getCollection().values()) {
                 if (!marine.getOwner().equals(user)) throw new PermissionDeniedException();
@@ -48,6 +46,8 @@ public class ClearCommand extends AbstractCommand{
         } catch (IllegalDatabaseEditException exception) {
             ResponseOutputer.append("Произошло нелегальное изменение объекта в базе данных!\n");
             ResponseOutputer.append("Перезапустите клиент для избежания ошибок!\n");
+        } catch (NonAuthorizedUserException e) {
+            ResponseOutputer.append("Необходимо авторизоваться!\n");
         }
         return false;
     }

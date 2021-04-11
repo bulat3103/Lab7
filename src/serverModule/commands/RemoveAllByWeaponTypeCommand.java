@@ -2,10 +2,7 @@ package serverModule.commands;
 
 import common.data.SpaceMarine;
 import common.data.Weapon;
-import common.exceptions.DatabaseManagerException;
-import common.exceptions.EmptyCollectionException;
-import common.exceptions.IllegalDatabaseEditException;
-import common.exceptions.WrongAmountOfParametersException;
+import common.exceptions.*;
 import common.utility.User;
 import serverModule.utility.CollectionManager;
 import serverModule.utility.DatabaseCollectionManager;
@@ -33,6 +30,7 @@ public class RemoveAllByWeaponTypeCommand extends AbstractCommand{
     @Override
     public boolean execute(String argument, Object objectArgument, User user) {
         try {
+            if (user == null) throw new NonAuthorizedUserException();
             if (argument.isEmpty() || objectArgument != null) throw new WrongAmountOfParametersException();
             if (collectionManager.collectionSize() == 0) throw new EmptyCollectionException();
             Weapon weapon = Weapon.valueOf(argument.toUpperCase());
@@ -54,6 +52,8 @@ public class RemoveAllByWeaponTypeCommand extends AbstractCommand{
         } catch (IllegalDatabaseEditException exception) {
             ResponseOutputer.append("Произошло нелегальное изменение объекта в базе данных!\n");
             ResponseOutputer.append("Перезапустите клиент для избежания ошибок!\n");
+        } catch (NonAuthorizedUserException e) {
+            ResponseOutputer.append("Необходимо авторизоваться!\n");
         }
         return false;
     }

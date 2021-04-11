@@ -128,6 +128,7 @@ public class Console {
                 case "sum_of_health":
                 case "average_of_heart_count":
                 case "exit":
+                case "log_out":
                     if (!argument.isEmpty()) throw new WrongAmountOfParametersException();
                     return ProcessCode.OK;
                 case "insert":
@@ -139,9 +140,6 @@ public class Console {
                 case "log_in":
                     if (!argument.isEmpty()) throw new WrongAmountOfParametersException();
                     return ProcessCode.LOG_IN;
-                case "log_out":
-                    if (!argument.isEmpty()) throw new WrongAmountOfParametersException();
-                    return ProcessCode.LOG_OUT;
                 case "remove_key":
                 case "remove_lower_key":
                 case "remove_all_by_weapon_type":

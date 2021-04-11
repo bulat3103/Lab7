@@ -13,8 +13,15 @@ public class RequestManager {
     }
 
     public Response manage(Request request) {
-        commandManager.addToHistory(request.getCommandName(), request.getUser());
-        ResponseCode responseCode = executeCommand(request.getCommandName(), request.getArgument(), request.getObjectArgument(), request.getUser());
+        User hashUser;
+        if (request.getUser() == null) {
+            hashUser = null;
+        } else {
+            hashUser = new User(
+                    request.getUser().getLogin(), DataHasher.hash(request.getUser().getPassword() + "!Hq78p@T"));
+            commandManager.addToHistory(request.getCommandName(), request.getUser());
+        }
+        ResponseCode responseCode = executeCommand(request.getCommandName(), request.getArgument(), request.getObjectArgument(), hashUser);
         return new Response(responseCode, ResponseOutputer.getAndClear());
     }
 
@@ -66,6 +73,15 @@ public class RequestManager {
                 break;
             case "average_of_heart_count":
                 if (!commandManager.averageOfHeartCount(argument, objectArgument, user)) return ResponseCode.ERROR;
+                break;
+            case "sign_up":
+                if (!commandManager.sign_up(argument, objectArgument, user)) return ResponseCode.ERROR;
+                break;
+            case "sign_in":
+                if (!commandManager.sign_in(argument, objectArgument, user)) return ResponseCode.ERROR;
+                break;
+            case "log_out":
+                if (!commandManager.log_out(argument, objectArgument, user)) return ResponseCode.ERROR;
                 break;
             default:
                 ResponseOutputer.append("Команда '" + command + "' не найдена. Наберите 'help' для справки.\n");

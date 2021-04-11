@@ -30,10 +30,13 @@ public class CommandManager {
     private AbstractCommand removeAllByWeaponTypeCommand;
     private AbstractCommand sumOfHealthCommand;
     private AbstractCommand averageOfHeartCountCommand;
+    private AbstractCommand signUpCommand;
+    private AbstractCommand signInCommand;
+    private AbstractCommand logOutCommand;
 
     private ReentrantLock locker = new ReentrantLock();
 
-    public CommandManager(AbstractCommand helpCommand, AbstractCommand infoCommand, AbstractCommand showCommand, AbstractCommand insertCommand, AbstractCommand updateCommand, AbstractCommand removeKeyCommand, AbstractCommand clearCommand, AbstractCommand executeScriptCommand, AbstractCommand exitCommand, AbstractCommand removeGreaterCommand, AbstractCommand historyCommand, AbstractCommand removeLowerKeyCommand, AbstractCommand removeAllByWeaponTypeCommand, AbstractCommand sumOfHealthCommand, AbstractCommand averageOfHeartCountCommand) {
+    public CommandManager(AbstractCommand helpCommand, AbstractCommand infoCommand, AbstractCommand showCommand, AbstractCommand insertCommand, AbstractCommand updateCommand, AbstractCommand removeKeyCommand, AbstractCommand clearCommand, AbstractCommand executeScriptCommand, AbstractCommand exitCommand, AbstractCommand removeGreaterCommand, AbstractCommand historyCommand, AbstractCommand removeLowerKeyCommand, AbstractCommand removeAllByWeaponTypeCommand, AbstractCommand sumOfHealthCommand, AbstractCommand averageOfHeartCountCommand, AbstractCommand signUpCommand, AbstractCommand signInCommand, AbstractCommand logOutCommand) {
         this.helpCommand = helpCommand;
         commands.add(helpCommand);
         this.infoCommand = infoCommand;
@@ -64,6 +67,16 @@ public class CommandManager {
         commands.add(sumOfHealthCommand);
         this.averageOfHeartCountCommand = averageOfHeartCountCommand;
         commands.add(averageOfHeartCountCommand);
+        this.signUpCommand = signUpCommand;
+        this.signInCommand = signInCommand;
+        commands.add(new AbstractCommand("log_in", "авторизоваться") {
+            @Override
+            public boolean execute(String argument, Object objectArgument, User user) {
+                return false;
+            }
+        });
+        this.logOutCommand = logOutCommand;
+        commands.add(logOutCommand);
     }
 
     /**
@@ -305,5 +318,17 @@ public class CommandManager {
         } finally {
             locker.unlock();
         }
+    }
+
+    public boolean sign_up(String argument, Object objectArgument, User user) {
+        return signUpCommand.execute(argument, objectArgument, user);
+    }
+
+    public boolean sign_in(String argument, Object objectArgument, User user) {
+        return signInCommand.execute(argument, objectArgument, user);
+    }
+
+    public boolean log_out(String argument, Object objectArgument, User user) {
+        return logOutCommand.execute(argument, objectArgument, user);
     }
 }

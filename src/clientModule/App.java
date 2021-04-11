@@ -10,16 +10,14 @@ import java.util.Scanner;
 public class App {
     private static String host;
     private static int port;
-    private static String fileName;
 
     public static void main(String[] args) {
         //if (!checkArgs(args)) return;
         Scanner scanner = new Scanner(System.in);
-        fileName = scanner.nextLine();
         AuthManager authManager = new AuthManager(scanner);
         Console console = new Console(scanner, authManager);
         Client client = new Client("localhost", 20002, console, authManager);
-        client.run(fileName);
+        client.run();
         scanner.close();
     }
 
