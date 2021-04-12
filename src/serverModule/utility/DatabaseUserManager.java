@@ -24,11 +24,25 @@ public class DatabaseUserManager {
             DatabaseManager.USER_TABLE_ONLINE_COLUMN + " = ?" + " WHERE " +
             DatabaseManager.USER_TABLE_USERNAME_COLUMN + " = ?" + " AND " +
             DatabaseManager.USER_TABLE_PASSWORD_COLUMN + " = ?";
+    private final String SWITCH_OFF_ALL_USERS = "UPDATE " + DatabaseManager.USER_TABLE + " SET " +
+            DatabaseManager.USER_TABLE_ONLINE_COLUMN + " = ?";
 
     private DatabaseManager databaseManager;
 
     public DatabaseUserManager(DatabaseManager databaseManager) {
         this.databaseManager = databaseManager;
+        switchOffAllUsers();
+    }
+
+    public void switchOffAllUsers() {
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = databaseManager.doPreparedStatement(SWITCH_OFF_ALL_USERS, false);
+            preparedStatement.setBoolean(1, false);
+            if (preparedStatement.executeUpdate() == 0) throw new SQLException();
+        } catch (SQLException e) {
+            System.out.println("Произошла ошибка при выполнении запроса SWITCH_OFF_ALL_USERS!");
+        }
     }
 
     public User getUserById(long userID) throws SQLException {

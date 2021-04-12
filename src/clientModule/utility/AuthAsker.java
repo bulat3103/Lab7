@@ -2,6 +2,7 @@ package clientModule.utility;
 
 import common.exceptions.NotDeclaredValueException;
 
+import java.io.Console;
 import java.util.Scanner;
 
 public class AuthAsker {
@@ -33,7 +34,9 @@ public class AuthAsker {
             try {
                 System.out.println("Введите пароль:");
                 System.out.print("> ");
-                password = scanner.nextLine().trim();
+                Console console = System.console();
+                char [] c = console.readPassword();
+                password = String.copyValueOf(c);
                 if (password.equals("")) throw new NotDeclaredValueException();
                 break;
             } catch (NotDeclaredValueException e) {

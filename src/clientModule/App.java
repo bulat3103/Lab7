@@ -12,11 +12,11 @@ public class App {
     private static int port;
 
     public static void main(String[] args) {
-        //if (!checkArgs(args)) return;
+        if (!checkArgs(args)) return;
         Scanner scanner = new Scanner(System.in);
         AuthManager authManager = new AuthManager(scanner);
         Console console = new Console(scanner, authManager);
-        Client client = new Client("localhost", 20002, console, authManager);
+        Client client = new Client(host, port, console, authManager);
         client.run();
         scanner.close();
     }

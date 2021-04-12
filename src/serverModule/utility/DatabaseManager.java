@@ -1,6 +1,8 @@
 package serverModule.utility;
 
+import java.io.Console;
 import java.sql.*;
+import java.util.Scanner;
 
 public class DatabaseManager {
     public static final String MARINE_TABLE = "space_marine";
@@ -35,27 +37,36 @@ public class DatabaseManager {
 
     private final String JDBC_DRIVER = "org.postgresql.Driver";
 
-    private String url;
+    private final String url = "jdbc:postgresql://localhost:5432/studs";
     private String user;
     private String password;
     private Connection connection;
 
-    public DatabaseManager(String url, String user, String password) {
-        this.url = url;
-        this.user = user;
-        this.password = password;
+    public DatabaseManager() {
         doConnectionToDatabase();
     }
 
     private void doConnectionToDatabase() {
-        try {
-            Class.forName(JDBC_DRIVER);
-            connection = DriverManager.getConnection(url, user, password);
-            System.out.println("Соединение с базой данных установлено!");
-        } catch (SQLException e) {
-            System.out.println("Произошла ошибка при подключении к базе данных!");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Драйвер управления базой данных не найден!");
+        Scanner scanner = new Scanner(System.in);
+        Console console = System.console();
+        System.out.println("Подключение к базе данных...");
+        while (true) {
+            System.out.println("Введите логин:");
+            this.user = scanner.nextLine();
+            System.out.println("Введите пароль:");
+            this.password = String.valueOf(console.readPassword());
+            try {
+                Class.forName(JDBC_DRIVER);
+                connection = DriverManager.getConnection(url, user, password);
+                System.out.println("Соединение с базой данных установлено!");
+                break;
+            } catch (SQLException e) {
+                System.out.println("Произошла ошибка при подключении к базе данных!");
+                System.out.println("Проверьте правильность ввода логина и пароля!");
+            } catch (ClassNotFoundException e) {
+                System.out.println("Драйвер управления базой данных не найден!");
+                System.exit(0);
+            }
         }
     }
 
